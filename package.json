@@ -1,13 +1,13 @@
 {
   "name": "yuianimations",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "intuitively create interactive UI Animations with respect to content and scrolling",
+  "main": "build/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc",
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["animation", "scroll", "ui"],
+  "author": "Nils Martel (nilsmartel@yahoo.de)",
   "license": "ISC",
   "devDependencies": {
     "typescript": "^4.6.4"
