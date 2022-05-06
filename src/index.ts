@@ -6,13 +6,13 @@ window.onscroll = async function () {
   let pageScroll = window.pageYOffset || document.documentElement.scrollTop
 
   for (let [element, action] of elementToWatch) {
-    if (typeof element === 'string') {
+    if (typeof element === "string") {
       const maybeElement = document.getElementById(element)
       if (!maybeElement) continue
       element = maybeElement
     }
 
-    const {height, y} = element.getBoundingClientRect()
+    const { height, y } = element.getBoundingClientRect()
 
     const position = pageScroll - y
 
@@ -20,7 +20,6 @@ window.onscroll = async function () {
       const factor = position / height
       action(factor)
     }
-
   }
 }
 
