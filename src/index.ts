@@ -1,7 +1,8 @@
+type Action = (factor: number) => Promise<void>
 
-const elementToWatch: [HTMLElement | string, (factor: number) => void][] = []
+const elementToWatch: [HTMLElement | string, Action][] = []
 
-window.onscroll = async function (event) {
+window.onscroll = async function () {
   let pageScroll = window.pageYOffset || document.documentElement.scrollTop
 
   for (let [element, action] of elementToWatch) {
@@ -23,6 +24,6 @@ window.onscroll = async function (event) {
   }
 }
 
-export default function animate(element: HTMLElement | string, action: (factor: number) => void) {
+export default function animate(element: HTMLElement | string, action: Action) {
   elementToWatch.push([element, action])
 }
