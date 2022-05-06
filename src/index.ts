@@ -3,11 +3,11 @@ type InterpolationFunction = (linear: number) => number
 
 export const Interpolation = {
   /**
-   * default Interpolation, 
-   * 
-   * Pace stays consistent 
+   * default Interpolation,
+   *
+   * Pace stays consistent
    * Starts just a little abrupt
-   * End just a little unexpected 
+   * End just a little unexpected
    */
   Linear(x: number): number {
     return x
@@ -17,7 +17,7 @@ export const Interpolation = {
    * Start slow, end hard
    */
   Quadratic(x: number): number {
-    return x*x
+    return x * x
   },
 
   /**
@@ -25,18 +25,17 @@ export const Interpolation = {
    */
   Root: Math.sqrt,
 
-
   Ease(x: number): number {
-    return -0.5*Math.cos(x*Math.PI)+0.5
+    return -0.5 * Math.cos(x * Math.PI) + 0.5
   },
 }
-
 
 /**
  * Collection of all Elements we watch for our animation
  * alongside state to remember, whether we have already started our animations or not
  */
-const elementToWatch: [HTMLElement | string, Action, AnimationState | null][] = []
+const elementToWatch: [HTMLElement | string, Action, AnimationState | null][] =
+  []
 
 enum AnimationState {
   Start,
@@ -59,10 +58,10 @@ const updateScrollAnimations = async function () {
 
     const { height, y } = element.getBoundingClientRect()
 
-    let factor: number = (-y / height)
+    let factor: number = -y / height
     if (isNaN(factor)) {
       // height might be 0
-      // in that case we want to have abinary decision about being either in start or end animation state  
+      // in that case we want to have abinary decision about being either in start or end animation state
       if (y > 0) factor = 0
       else factor = 1
     }
@@ -78,7 +77,7 @@ const updateScrollAnimations = async function () {
     // we want to run the animation at least once, to be consistent when it starts
     // this is guaranteed by the state beeing null only on startup,
     // and by some animation always happening in between, before and after an animation
-  
+
     // we want to ensure that the animation is up to date before and after,
     // as to not leave the screen with intermediate artifacts, when the exact 0 | 1 point has been reached
 
@@ -104,7 +103,11 @@ window.onscroll = updateScrollAnimations
 // Fire the animation frames on page load, to remain consistent later on
 window.onpageshow = updateScrollAnimations
 
-export default function animate(element: HTMLElement | string, action: Action, interpolation?: InterpolationFunction) {
+export default function animate(
+  element: HTMLElement | string,
+  action: Action,
+  interpolation?: InterpolationFunction
+) {
   if (interpolation) action = (x: number) => action(interpolation(x))
 
   elementToWatch.push([element, action, null])
