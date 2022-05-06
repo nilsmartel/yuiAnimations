@@ -1,4 +1,35 @@
 type Action = (factor: number) => Promise<void>
+type InterpolationFunction = ((linear: number) => number) | null
+
+export const Interpolation = {
+  /**
+   * default Interpolation, 
+   * 
+   * Pace stays consistent 
+   * Starts just a little abrupt
+   * End just a little unexpected 
+   */
+  Linear(x: number) {
+    return x
+  },
+
+  /**
+   * Start slow, end hard
+   */
+  Quadratic(x: number) {
+    return x*x
+  },
+
+  /**
+   * Start strong, end graceful
+   */
+  Root: Math.sqrt,
+
+
+  Ease(x: number) {
+    return x*x
+  },
+}
 
 
 /**
