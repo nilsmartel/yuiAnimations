@@ -12,12 +12,14 @@ window.onscroll = async function () {
       element = maybeElement
     }
 
-    const { height, y } = element.getBoundingClientRect()
+    const {height, y} = element.getBoundingClientRect()
 
     const position = pageScroll - y
 
     if (position >= 0 && position <= height) {
-      const factor = position / height
+      let factor: number = (position / height)
+      if (isNaN(factor)) factor = 1.0
+
       action(factor)
     }
   }
