@@ -103,6 +103,11 @@ window.onscroll = updateScrollAnimations
 // Fire the animation frames on page load, to remain consistent later on
 window.onpageshow = updateScrollAnimations
 
+/** Useful function, that one will find to need from time to time, when using this library.
+ * Interpolates between 2 values, if used on the interval [0, 1]
+*/
+export const lerp = (a: number, b: number, x: number) => a + (b - a) * x
+
 export default function animate(
   element: HTMLElement | string,
   action: Action,
