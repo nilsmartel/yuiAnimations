@@ -1,5 +1,5 @@
 type Action = (factor: number) => Promise<void>
-type InterpolationFunction = ((linear: number) => number) | null
+type InterpolationFunction = (linear: number) => number
 
 export const Interpolation = {
   /**
@@ -9,14 +9,14 @@ export const Interpolation = {
    * Starts just a little abrupt
    * End just a little unexpected 
    */
-  Linear(x: number) {
+  Linear(x: number): number {
     return x
   },
 
   /**
    * Start slow, end hard
    */
-  Quadratic(x: number) {
+  Quadratic(x: number): number {
     return x*x
   },
 
@@ -26,8 +26,8 @@ export const Interpolation = {
   Root: Math.sqrt,
 
 
-  Ease(x: number) {
-    return x*x
+  Ease(x: number): number {
+    return -0.5*Math.cos(x*Math.PI)+0.5
   },
 }
 
@@ -100,8 +100,12 @@ const updateScrollAnimations = async function () {
 }
 
 window.onscroll = updateScrollAnimations
+
+// Fire the animation frames on page load, to remain consistent later on
 window.onpageshow = updateScrollAnimations
 
-export default function animate(element: HTMLElement | string, action: Action) {
+export default function animate(element: HTMLElement | string, action: Action, interpolation?: InterpolationFunction) {
+  if (interpolation) action = (x: number) => action(interpolation(x))
+
   elementToWatch.push([element, action, null])
 }
