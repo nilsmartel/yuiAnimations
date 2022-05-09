@@ -1,6 +1,17 @@
 type Action = (factor: number) => Promise<void>
 type InterpolationFunction = (linear: number) => number
 
+/**
+ * Where on the screen an element needs to pass, for the animation to start playing.
+ * 
+ * default is Top.
+ */
+export enum StartPosition {
+  Top,
+  Middle,
+  Bottom,
+}
+
 export const Interpolation = {
   /**
    * default Interpolation,
@@ -34,7 +45,7 @@ export const Interpolation = {
  * Collection of all Elements we watch for our animation
  * alongside state to remember, whether we have already started our animations or not
  */
-const elementToWatch: [HTMLElement | string, Action, AnimationState | null][] =
+const elementToWatch: [HTMLElement | string, Action, AnimationState | null, StartPosition][] =
   []
 
 enum AnimationState {
@@ -44,8 +55,13 @@ enum AnimationState {
 }
 
 const updateScrollAnimations = async function () {
+  const screenSize = window.innerHeight
+  const mid = screenSize >> 1;
+  const bottom = screenSize;
+
   for (let index in elementToWatch) {
-    let [element, action, state] = elementToWatch[index]
+    let [element, action, state, startPosition] = elementToWatch[index]
+
     const setState = (state: AnimationState) => {
       elementToWatch[index][2] = state
     }
@@ -56,7 +72,16 @@ const updateScrollAnimations = async function () {
       element = maybeElement
     }
 
-    const { height, y } = element.getBoundingClientRect()
+    let { height, y } = element.getBoundingClientRect()
+    // Adjust the position to respect different start positions
+    switch (startPosition) {
+      case StartPosition.Middle:
+        y -= mid
+        break
+      case StartPosition.Top:
+        y -= bottom
+        break
+    }
 
     let factor: number = -y / height
     if (isNaN(factor)) {
@@ -111,9 +136,10 @@ export const lerp = (a: number, b: number, x: number) => a + (b - a) * x
 export default function animate(
   element: HTMLElement | string,
   action: Action,
-  interpolation?: InterpolationFunction
+  startPosition: StartPosition | undefined = StartPosition.Top,
+  interpolation: InterpolationFunction | undefined,
 ) {
   if (interpolation) action = (x: number) => action(interpolation(x))
 
-  elementToWatch.push([element, action, null])
+  elementToWatch.push([element, action, null, startPosition])
 }
