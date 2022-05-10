@@ -62,7 +62,7 @@ enum AnimationState {
   End,
 }
 
-const updateScrollAnimations = async function () {
+const updateScrollAnimations = function () {
   const screenSize = window.innerHeight
   const mid = screenSize >> 1;
   const bottom = screenSize;
@@ -86,7 +86,7 @@ const updateScrollAnimations = async function () {
       case StartPosition.Middle:
         y -= mid
         break
-      case StartPosition.Top:
+      case StartPosition.Bottom:
         y -= bottom
         break
     }
