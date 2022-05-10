@@ -1,4 +1,4 @@
-type Action = (factor: number) => Promise<void>
+type Action = (factor: number) => void
 type InterpolationFunction = (linear: number) => number
 
 /**
