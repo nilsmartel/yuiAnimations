@@ -41,11 +41,19 @@ export const Interpolation = {
   },
 }
 
+interface WatchElement {
+  element: HTMLElement | string
+  action: Action
+  state?: AnimationState
+  startPosition: StartPosition
+  id?: string
+}
+
 /**
  * Collection of all Elements we watch for our animation
  * alongside state to remember, whether we have already started our animations or not
  */
-const elementToWatch: [HTMLElement | string, Action, AnimationState | null, StartPosition][] =
+const elementsToWatch: WatchElement[] =
   []
 
 enum AnimationState {
@@ -59,11 +67,11 @@ const updateScrollAnimations = async function () {
   const mid = screenSize >> 1;
   const bottom = screenSize;
 
-  for (let index in elementToWatch) {
-    let [element, action, state, startPosition] = elementToWatch[index]
+  for (let index in elementsToWatch) {
+    let { element, action, state, startPosition } = elementsToWatch[index]
 
     const setState = (state: AnimationState) => {
-      elementToWatch[index][2] = state
+      elementsToWatch[index].state = state
     }
 
     if (typeof element === "string") {
@@ -134,13 +142,48 @@ window.onpageshow = () => window.setTimeout(updateScrollAnimations, 0)
 */
 export const lerp = (a: number, b: number, x: number) => a + (b - a) * x
 
+export interface Options {
+  startPosition?: StartPosition
+  interpolation?: InterpolationFunction
+  id?: string
+}
+
 export default function animate(
   element: HTMLElement | string,
   action: Action,
-  startPosition: StartPosition | undefined = StartPosition.Top,
-  interpolation: InterpolationFunction | undefined,
+  options?: Options,
 ) {
-  if (interpolation) action = (x: number) => action(interpolation(x))
+  if (options?.interpolation) {
+    const i = options?.interpolation
+    action = (x: number) => action(i(x))
+  }
 
-  elementToWatch.push([element, action, null, startPosition])
+  elementsToWatch.push({ element, action, startPosition: options?.startPosition ?? StartPosition.Top, id: options?.id })
+}
+
+export function revokeAnimation(
+  key: {
+    element?: HTMLElement | string,
+    action?: Action,
+    id?: string
+  } 
+) {
+  if (key.id) {
+    const id = key.id
+
+    const index = elementsToWatch.findIndex(elem => elem.id === id)
+    if (index === -1) throw Error("No element found with index ${index}. Failed to remove from animation list")
+
+    elementsToWatch.splice(index, 1)
+    return
+  }
+
+  const {element, action} = key
+  if (!element || !action) throw Error("can't revoke element of type undefined or action of type undefind")
+
+  
+  const index = elementsToWatch.findIndex(elem => elem.element === element && elem.action === action)
+  if (index === -1) throw Error("No element or action matches predicate. Failed to remove from animation list")
+
+  elementsToWatch.splice(index, 1)
 }
