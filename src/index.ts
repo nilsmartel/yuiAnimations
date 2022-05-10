@@ -3,7 +3,7 @@ type InterpolationFunction = (linear: number) => number
 
 /**
  * Where on the screen an element needs to pass, for the animation to start playing.
- * 
+ *
  * default is Top.
  */
 export enum StartPosition {
@@ -126,7 +126,8 @@ const updateScrollAnimations = async function () {
 window.onscroll = updateScrollAnimations
 
 // Fire the animation frames on page load, to remain consistent later on
-window.onpageshow = updateScrollAnimations
+// Though we want to defer firing this event, until later in the event loop. This helps with responsive websites
+window.onpageshow = () => window.setTimeout(updateScrollAnimations, 0)
 
 /** Useful function, that one will find to need from time to time, when using this library.
  * Interpolates between 2 values, if used on the interval [0, 1]
