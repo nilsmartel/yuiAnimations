@@ -5,7 +5,6 @@
   "main": "build/index.js",
   "scripts": {
     "build": "tsc",
-    "publish": "npm install && npm rum build && npm publish",
     "fmt": "prettier . --write"
   },
   "keywords": [
