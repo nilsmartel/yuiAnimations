@@ -149,7 +149,8 @@ export default function animate(
 ) {
   if (options?.interpolation) {
     const i = options?.interpolation
-    action = (x: number) => action(i(x))
+    const a = action
+    action = (x: number) => a(i(x))
   }
 
   elementsToWatch.push({
