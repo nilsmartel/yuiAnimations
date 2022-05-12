@@ -53,8 +53,7 @@ interface WatchElement {
  * Collection of all Elements we watch for our animation
  * alongside state to remember, whether we have already started our animations or not
  */
-const elementsToWatch: WatchElement[] =
-  []
+const elementsToWatch: WatchElement[] = []
 
 enum AnimationState {
   Start,
@@ -64,8 +63,8 @@ enum AnimationState {
 
 const updateScrollAnimations = function () {
   const screenSize = window.innerHeight
-  const mid = screenSize >> 1;
-  const bottom = screenSize;
+  const mid = screenSize >> 1
+  const bottom = screenSize
 
   for (let index in elementsToWatch) {
     let { element, action, state, startPosition } = elementsToWatch[index]
@@ -81,15 +80,10 @@ const updateScrollAnimations = function () {
     }
 
     let { height, y } = element.getBoundingClientRect()
+
     // Adjust the position to respect different start positions
-    switch (startPosition) {
-      case StartPosition.Middle:
-        y -= mid
-        break
-      case StartPosition.Bottom:
-        y -= bottom
-        break
-    }
+    if (startPosition === StartPosition.Middle) y -= mid
+    else if (startPosition === StartPosition.Bottom) y -= bottom
 
     let factor: number = -y / height
     if (isNaN(factor)) {
@@ -139,7 +133,7 @@ window.onpageshow = () => window.setTimeout(updateScrollAnimations, 0)
 
 /** Useful function, that one will find to need from time to time, when using this library.
  * Interpolates between 2 values, if used on the interval [0, 1]
-*/
+ */
 export const lerp = (a: number, b: number, x: number) => a + (b - a) * x
 
 export interface Options {
@@ -151,39 +145,52 @@ export interface Options {
 export default function animate(
   element: HTMLElement | string,
   action: Action,
-  options?: Options,
+  options?: Options
 ) {
   if (options?.interpolation) {
     const i = options?.interpolation
     action = (x: number) => action(i(x))
   }
 
-  elementsToWatch.push({ element, action, startPosition: options?.startPosition ?? StartPosition.Top, id: options?.id })
+  elementsToWatch.push({
+    element,
+    action,
+    startPosition: options?.startPosition ?? StartPosition.Top,
+    id: options?.id,
+  })
 }
 
-export function revokeAnimation(
-  key: {
-    element?: HTMLElement | string,
-    action?: Action,
-    id?: string
-  } 
-) {
+export function revokeAnimation(key: {
+  element?: HTMLElement | string
+  action?: Action
+  id?: string
+}) {
   if (key.id) {
     const id = key.id
 
-    const index = elementsToWatch.findIndex(elem => elem.id === id)
-    if (index === -1) throw Error("No element found with index ${index}. Failed to remove from animation list")
+    const index = elementsToWatch.findIndex((elem) => elem.id === id)
+    if (index === -1)
+      throw Error(
+        "No element found with index ${index}. Failed to remove from animation list"
+      )
 
     elementsToWatch.splice(index, 1)
     return
   }
 
-  const {element, action} = key
-  if (!element || !action) throw Error("can't revoke element of type undefined or action of type undefind")
+  const { element, action } = key
+  if (!element || !action)
+    throw Error(
+      "can't revoke element of type undefined or action of type undefind"
+    )
 
-  
-  const index = elementsToWatch.findIndex(elem => elem.element === element && elem.action === action)
-  if (index === -1) throw Error("No element or action matches predicate. Failed to remove from animation list")
+  const index = elementsToWatch.findIndex(
+    (elem) => elem.element === element && elem.action === action
+  )
+  if (index === -1)
+    throw Error(
+      "No element or action matches predicate. Failed to remove from animation list"
+    )
 
   elementsToWatch.splice(index, 1)
 }
